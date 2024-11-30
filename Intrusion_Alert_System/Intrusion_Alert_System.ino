@@ -3,124 +3,111 @@
 #include <utility/wifi_drv.h>
 #include "arduino_secrets.h" 
 
-const char* ssid          = SECRET_SSID;
-const char* password      = SECRET_PASS;
-const char* mqtt_username = SECRET_MQTTUSER;
-const char* mqtt_password = SECRET_MQTTPASS;
-const char* mqtt_server = "mqtt.cetools.org";
-const int mqtt_port = 1884;
-int status = WL_IDLE_STATUS;
+// WiFi and MQTT Configuration
+const char* ssid          = SECRET_SSID;       // WiFi network name
+const char* password      = SECRET_PASS;       // WiFi password
+const char* mqtt_username = SECRET_MQTTUSER;   // MQTT username
+const char* mqtt_password = SECRET_MQTTPASS;   // MQTT password
+const char* mqtt_server = "mqtt.cetools.org";  // MQTT server address
+const int mqtt_port = 1884;                    // MQTT port number
+int status = WL_IDLE_STATUS;                   // WiFi connection status
 
+// MQTT and WiFi clients
 WiFiClient mkrClient;
 PubSubClient client(mkrClient);
 
-// MQTT topic for controlling the light
+// MQTT topic for controlling the lights
 char mqtt_topic_demo[] = "student/CASA0014/light/32/pixel/";
 const char* brightness_topic = "student/CASA0014/light/32/brightness/";
 
-// PIR and buzzer setup
+// PIR and buzzer configuration
 const int PIR_PIN = 3;      // PIR motion sensor pin
 const int BUZZER_PIN = 7;   // Buzzer pin
-
-bool pirTriggered = false;  // 记录 PIR 是否被触发过
+bool pirTriggered = false;  // Tracks if motion has been detected
 
 void setup() {
-  // Initialize serial, WiFi, and MQTT
-  Serial.begin(115200);
+  Serial.begin(115200);         // Initialize serial communication
   WiFi.setHostname("Lumina ucjtdjw");
-  pinMode(PIR_PIN, INPUT); 
-  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(PIR_PIN, INPUT);      // Set PIR sensor as input
+  pinMode(BUZZER_PIN, OUTPUT);  // Set buzzer as output
   
-  startWifi();
-  client.setServer(mqtt_server, mqtt_port);
+  startWifi();                  // Connect to WiFi
+  client.setServer(mqtt_server, mqtt_port); // Configure MQTT server
   Serial.println("Setup complete");
 
-  // 初始状态设置为绿色
-  updateLights(0, 255, 0); // 安全状态，绿色
+  // Set initial light state to green (safe)
+  updateLights(0, 255, 0);
 }
 
 void loop() {
-  // Ensure WiFi and MQTT connection
-  if (!client.connected()) reconnectMQTT();
-  if (WiFi.status() != WL_CONNECTED) startWifi();
-  
-  client.loop();
+  if (!client.connected()) reconnectMQTT();    // Ensure MQTT connection
+  if (WiFi.status() != WL_CONNECTED) startWifi(); // Ensure WiFi connection
 
-  // Check PIR sensor and update lights
-  int motionDetected = digitalRead(PIR_PIN);
+  client.loop();   // Process incoming MQTT messages
+
+  int motionDetected = digitalRead(PIR_PIN); // Check PIR sensor status
 
   if (motionDetected == HIGH) {
-    // 触发报警
-    tone(BUZZER_PIN, 1000, 250); // 蜂鸣器发声
+    // Trigger alarm
+    tone(BUZZER_PIN, 1000, 250); // Emit sound with buzzer
     Serial.println("Motion detected! Lights flashing RED.");
-    pirTriggered = true;    // 记录 PIR 已被触发
-    flashRedLights();       // 闪烁红灯
+    pirTriggered = true;         // Mark motion as detected
+    flashRedLights();            // Flash red lights
   } else {
-    // 停止蜂鸣器，更新灯状态
-    noTone(BUZZER_PIN);
-
+    noTone(BUZZER_PIN);          // Stop buzzer sound
     if (pirTriggered) {
-      Serial.println("Someone has been here. Lights turning YELLOW.");
-      updateLights(204, 204, 0); // PIR 曾被触发状态，黄色
+      Serial.println("Motion was detected earlier. Lights turning YELLOW.");
+      updateLights(204, 204, 0); // Change light to yellow (caution)
     } else {
-      Serial.println("Nothing detected. Lights turning GREEN.");
-      updateLights(0, 255, 0); // 安全状态，绿色
+      Serial.println("No motion detected. Lights turning GREEN.");
+      updateLights(0, 255, 0);   // Change light to green (safe)
     }
-
-    delay(200);
+    delay(200);                  // Avoid frequent updates
   }
 }
 
+// Flash red lights with buzzer sound
 void flashRedLights() {
-  for (int i = 0; i < 6; i++) { // 红灯和蜂鸣器快速闪烁 3 次
-    // 红灯亮
-    updateLights(255, 0, 0); 
-    tone(BUZZER_PIN, 1000); // 蜂鸣器发声
-    delay(200);             // 快速延时，蜂鸣器保持 100 毫秒
+  for (int i = 0; i < 6; i++) { 
+    updateLights(255, 0, 0); // Turn lights red
+    tone(BUZZER_PIN, 1000);  // Emit sound
+    delay(200);              // Flash delay
 
-    // 红灯灭
-    updateLights(0, 0, 0);  
-    noTone(BUZZER_PIN);     // 停止蜂鸣器
-    delay(200);             // 快速延时，蜂鸣器静音 100 毫秒
+    updateLights(0, 0, 0);   // Turn lights off
+    noTone(BUZZER_PIN);      // Stop sound
+    delay(200);              // Pause before next flash
   }
 }
 
-
+// Update lights to specified RGB values
 void updateLights(int R, int G, int B) {
   char mqtt_message[100];
-
   for (int pixelid = 0; pixelid < 12; pixelid++) {
-    // 构建每个 pixelid 的颜色消息
     sprintf(mqtt_message, "{\"pixelid\": %d, \"R\": %d, \"G\": %d, \"B\": %d, \"W\": 0}", pixelid, R, G, B);
-    if (client.publish(mqtt_topic_demo, mqtt_message)) {
-    } else {
-    }
+    client.publish(mqtt_topic_demo, mqtt_message); // Publish message to MQTT
   }
 }
 
-
+// Connect to WiFi network
 void startWifi() {
   if (WiFi.status() == WL_NO_MODULE) {
-    Serial.println("WiFi module failed!");
+    Serial.println("WiFi module not found!");
     while (true);
   }
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) delay(500);
   Serial.println("WiFi connected");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 }
 
+// Reconnect to MQTT broker if connection is lost
 void reconnectMQTT() {
   while (!client.connected()) {
     Serial.print("Connecting to MQTT...");
-    String clientId = "LuminaSelector";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "LuminaSelector-" + String(random(0xffff), HEX);
     if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
       Serial.println("Connected to MQTT!");
     } else {
-      Serial.print("Failed, rc=");
-      Serial.println(client.state());
+      Serial.print("Failed to connect. Retrying...");
       delay(5000);
     }
   }

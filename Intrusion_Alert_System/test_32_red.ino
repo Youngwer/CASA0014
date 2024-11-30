@@ -1,21 +1,9 @@
-
-//#include <Wire.h>
-//#include <Adafruit_GFX.h>
 #include <WiFiNINA.h>   
 #include <PubSubClient.h>
 #include <utility/wifi_drv.h>   // library to drive to RGB LED on the MKR1010
 #include "arduino_secrets.h" 
 
-/*
-**** please enter your sensitive data in the Secret tab/arduino_secrets.h
-**** using format below
-
-#define SECRET_SSID "ssid name"
-#define SECRET_PASS "ssid password"
-#define SECRET_MQTTUSER "user name - eg student"
-#define SECRET_MQTTPASS "password";
- */
-
+// WiFi and MQTT Configuration
 const char* ssid          = SECRET_SSID;
 const char* password      = SECRET_PASS;
 const char* mqtt_username = SECRET_MQTTUSER;
@@ -30,7 +18,6 @@ WiFiClient wificlient;
 WiFiClient mkrClient;
 PubSubClient client(mkrClient);
 
-// edit this for the light you are connecting to
 char mqtt_topic_demo[] = "student/CASA0014/light/32/pixel/";
 
 void setup() {
@@ -64,23 +51,25 @@ void loop() {
   Serial.println("sent a message");
   delay(10000);
 }
+
 void sendmqtt() {
-  // 定义 MQTT 消息缓冲区
+  // Define the MQTT message buffer
   char mqtt_message[100];
 
-  // 设置亮度值
-  int brightness = 60; // 可修改为需要的亮度值
-  // 创建 JSON 格式的亮度消息
+  // Set brightness level
+  int brightness = 60; 
+  // Create a JSON message for brightness
   char brightness_message[50];
   sprintf(brightness_message, "{\"brightness\": %d}", brightness);
 
-  // 发送亮度设置到亮度主题
+  // Publish the brightness value to the corresponding MQTT topic
   const char* brightness_topic = "student/CASA0014/light/32/brightness/";
   if (client.publish(brightness_topic, brightness_message)) {
     Serial.println("Brightness updated successfully!");
   } else {
     Serial.println("Failed to update brightness.");
   }
+  // Publish RGB color data for each pixel
   for (int pixelid = 0; pixelid < 12; pixelid++) {
       sprintf(mqtt_message, "{\"pixelid\": %d, \"R\": 255, \"G\": 0, \"B\": 0, \"W\": 0}", pixelid);
       Serial.print("Sending to topic: ");
@@ -184,7 +173,7 @@ void reconnectMQTT() {
 }
 
 void callback(char* topic, byte* payload, int length) {
-  // Handle incoming messages。也就是说可以控制pixelid来展示部分灯是否是亮的
+  // Handle incoming messages。
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("]: ");
