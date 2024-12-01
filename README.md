@@ -1,5 +1,4 @@
-# CASA0014
-Intrusion Alarm System
+# Intrusion Alarm System
 ## 0. Introduction
 This Intrusion Alarm System is an Arduino-based project designed to detect unauthorized movements in environments such as labs, offices, or homes.  
 The status of the system will be sent to MQTT server via the Wi-Fi network "CE-Lab-Students", ensuring both on-site and off-site monitoring of activity.
