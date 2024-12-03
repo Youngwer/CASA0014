@@ -23,6 +23,7 @@ const char* brightness_topic = "student/CASA0014/light/32/brightness/";
 // PIR and buzzer configuration
 const int PIR_PIN = 3;      // PIR motion sensor pin
 const int BUZZER_PIN = 7;   // Buzzer pin
+const int BUTTON_PIN = 6;   // Reset button pin 
 bool pirTriggered = false;  // Tracks if motion has been detected
 
 void setup() {
@@ -30,7 +31,7 @@ void setup() {
   WiFi.setHostname("Lumina ucjtdjw");
   pinMode(PIR_PIN, INPUT);      // Set PIR sensor as input
   pinMode(BUZZER_PIN, OUTPUT);  // Set buzzer as output
-  
+  pinMode(BUTTON_PIN, INPUT_PULLUP); // Set button as input with internal pull-up
   startWifi();                  // Connect to WiFi
   client.setServer(mqtt_server, mqtt_port); // Configure MQTT server
   Serial.println("Setup complete");
@@ -44,6 +45,10 @@ void loop() {
   if (WiFi.status() != WL_CONNECTED) startWifi(); // Ensure WiFi connection
 
   client.loop();   // Process incoming MQTT messages
+  // Check if the reset button is pressed
+  if (digitalRead(BUTTON_PIN) == LOW) {        // Button pressed
+    resetSystem();                             // Reset lights to green
+  }
 
   int motionDetected = digitalRead(PIR_PIN); // Check PIR sensor status
 
@@ -77,6 +82,13 @@ void flashRedLights() {
     noTone(BUZZER_PIN);      // Stop sound
     delay(200);              // Pause before next flash
   }
+}
+
+// Reset system to green light 
+void resetSystem() { 
+  Serial.println("Reset button pressed. Lights turning GREEN."); // 
+  pirTriggered = false;       // Clear motion detection flag 
+  updateLights(0, 255, 0);    // Reset light to green 
 }
 
 // Update lights to specified RGB values
