@@ -43,11 +43,14 @@ In this test, the goal was to verify that the Arduino MKR WiFi 1010 can connect 
 The PIR sensor was used to detect motion in the system's environment, and the buzzer was activated in response to motion detection. The goal was to confirm that the hardware components were functioning correctly before integrating them into the full system.
 
 #### [Intrusion Alert System](Intrusion_Alert_System/Intrusion_Alert_System.ino)
-The entire Intrusion Alarm System was assembled, including:
+The wiring of this system is showed below:
+![physical_wiring](image/physical_wiring.JPG)
 
+The entire Intrusion Alarm System was assembled, including:
 + Connecting the Arduino to Wi-Fi and the MQTT server.
 + Continuously monitoring the environment for motion using the PIR sensor.
-+ Triggering the buzzer and visual indicators (lights) based on motion detection.
++ Triggering the buzzer and LED to send alert information based on motion detection.
++ resetting the system with a reset botton
 ### circuit diagram
 Below is the circuit diagram for the Intrusion Alarm System:
 ![Circuit Diagram](image/circuit%20diagram.png)
@@ -128,3 +131,29 @@ void updateLights(int R, int G, int B) {
   }
 }
 ```
+### System Operation Results
+Below are the results from the Intrusion Alert System in operation, showcasing its ability to monitor and send alerts via MQTT, as well as the Serial Monitor feedback for debugging purposes.
++ MQTT Feed:
+The screenshot below demonstrates the Intrusion Alert System sending motion detection alerts to the MQTT server. This verifies successful data transmission and real-time monitoring capabilities.
+![MQTT](image/MQTT%20feed.png)
++ Serial Monitor Feedback:
+The Serial Monitor output confirms the functionality of various components, including Wi-Fi and MQTT connections, PIR sensor readings, and buzzer activations.
+![MQTT](image/serial%20monitor.png)
+
+## 3. Limitation and Reflection
+While the Intrusion Alarm System fulfills its purpose of detecting and alerting unauthorized movements, there are still areas for improvement:
+
+### Limitations:
++ Overly Sensitive Buzzer
+The buzzer occasionally triggers false alarms due to excessive sensitivity, making it challenging to balance between effective detection and reducing false positives.
+
++ Impact of Environmental Vibrations
+Small vibrations, such as a knock on the table, can interfere with the accuracy of the PIR sensor, leading to false detections.
+
+### Reflections and Future Improvements:
++ Add an LCD Display
+Incorporating an LCD screen into the system can provide real-time information about when an alert was triggered. This addition would give users precise data about intrusion timing, enhancing the system's usability.
++ Encase the System
+Creating an enclosed case for the entire system would minimize the impact of external vibrations or environmental factors. A properly designed enclosure could also protect components from dust or accidental damage, improving overall durability and reliability.
+
+These enhancements would make the Intrusion Alarm System more robust and user-friendly, furthering its applicability in real-world scenarios.
