@@ -1,8 +1,8 @@
-# Intrusion Alarm System
+# Intrusion Alarm System🚨
 ## 0. Project Overview
-This Intrusion Alarm System is an Arduino-based project designed to detect unauthorized movements in environments such as labs, offices, or homes. The status of the system will be sent to MQTT server via the Wi-Fi network "CE-Hub-Student", ensuring both on-site and off-site monitoring of activity. This project about MQTT server builds upon [CASA0014 Chrono Lumina workshop](https://workshops.cetools.org/codelabs/CASA0014-L6-chrono-blinker/index.html?index=..%2F..casa0014#1), with sensor added to the system to monitor its surroundings.
+This Intrusion Alarm System is an Arduino-based project designed to detect unauthorized movements in environments such as labs, offices, or homes. The status of the system will be sent to MQTT server via the Wi-Fi network "CE-Hub-Student"🛜, ensuring both on-site and off-site monitoring of activity. This project about MQTT server builds upon [CASA0014 Chrono Lumina workshop](https://workshops.cetools.org/codelabs/CASA0014-L6-chrono-blinker/index.html?index=..%2F..casa0014#1), with sensor added to the system to monitor its surroundings.
 
-## 1. Prototype and System Design 
+## 1. Prototype and System Design
 ### Workflow
 The following flowchart illustrates the working process of the Intrusion Alarm System:
 ![Circuit Diagram](image/flow%20chart.png)
@@ -14,7 +14,7 @@ Before deploying the Intrusion Alarm System, ensure necessary setup and librarie
    + [Arduino MKR WiFi 1010](https://www.bing.com/search?q=Arduino+MKR+WiFi+1010&qs=n&form=QBRE&sp=-1&lq=0&pq=arduino+mkr+wifi+1010&sc=15-21&sk=&cvid=30852ECE31DC40349267C8DCFC9F06D9&ghsh=0&ghacc=0&ghpl=)  
    + [PIR Motion Sensor](https://www.build-electronic-circuits.com/arduino-pir-sensor-circuit-and-code-example/) 
    + [PKM22EPP-40 Buzzer](https://octopart.com/zh/pkm22epp-40-murata-2781524)  
-   + Button (for resetting system)  
+   + Button (for resetting system)
    + 10kΩ Resistor (for the button's pull-up configuration)  
    + Dupont Wires (for connections) 
 
@@ -22,8 +22,8 @@ Before deploying the Intrusion Alarm System, ensure necessary setup and librarie
    + Arduino IDE
    + Libraries
      - [`WiFiNINA`](https://docs.arduino.cc/libraries/wifinina/) 
-     - [ `PubSubClient` ](https://github.com/knolleary/pubsubclient)
-     - [`wifi_drv` ](https://github.com/arduino-libraries/WiFi/blob/master/src/utility/wifi_drv.h)
+     - [`PubSubClient`](https://github.com/knolleary/pubsubclient)
+     - [`wifi_drv`](https://github.com/arduino-libraries/WiFi/blob/master/src/utility/wifi_drv.h)
      - [`arduino_secrets.h`](Intrusion_Alert_System/arduino_secrets.h)
 
 ### Process
@@ -120,7 +120,7 @@ void resetSystem() {
   updateLights(0, 255, 0);    // Reset light to green 
 }
 ```
-#### updateLights(int R, int G, int B)
+#### updateLights(int R, int G, int B)💡
 This function updates the light color for each pixel using the MQTT protocol. It sends an MQTT message with the specified RGB values to control the lights.
 ```
 void updateLights(int R, int G, int B) {
@@ -144,16 +144,16 @@ The Serial Monitor output confirms the functionality of various components, incl
 While the Intrusion Alarm System fulfills its purpose of detecting and alerting unauthorized movements, there are still areas for improvement:
 
 ### Limitations:
-+ Overly Sensitive Buzzer
++ Overly Sensitive Buzzer⏰
 The buzzer occasionally triggers false alarms due to excessive sensitivity, making it challenging to balance between effective detection and reducing false positives.
 
 + Impact of Environmental Vibrations
 Small vibrations, such as a knock on the table, can interfere with the accuracy of the PIR sensor, leading to false detections.
 
 ### Reflections and Future Improvements:
-+ Add an LCD Display
++ Add a LCD Display🖥️
 Incorporating an LCD screen into the system can provide real-time information about when an alert was triggered. This addition would give users precise data about intrusion timing, enhancing the system's usability.
-+ Encase the System
++ Encase the System📦
 Creating an enclosed case for the entire system would minimize the impact of external vibrations or environmental factors. A properly designed enclosure could also protect components from dust or accidental damage, improving overall durability and reliability.
 
 These enhancements would make the Intrusion Alarm System more robust and user-friendly, furthering its applicability in real-world scenarios.
