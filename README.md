@@ -145,15 +145,17 @@ While the Intrusion Alarm System fulfills its purpose of detecting and alerting 
 
 ### Limitations:
 + Overly Sensitive Buzzer⏰
-The buzzer occasionally triggers false alarms due to excessive sensitivity, making it challenging to balance between effective detection and reducing false positives.
+
+  The buzzer occasionally triggers false alarms due to excessive sensitivity, making it challenging to balance between effective detection and reducing false positives.
 
 + Impact of Environmental Vibrations
-Small vibrations, such as a knock on the table, can interfere with the accuracy of the PIR sensor, leading to false detections.
+
+  Small vibrations, such as a knock on the table, can interfere with the accuracy of the PIR sensor, leading to false detections.
 
 ### Reflections and Future Improvements:
 + Add a LCD Display🖥️
-Incorporating an LCD screen into the system can provide real-time information about when an alert was triggered. This addition would give users precise data about intrusion timing, enhancing the system's usability.
+  Incorporating an LCD screen into the system can provide real-time information about when an alert was triggered. This addition would give users precise data about intrusion timing, enhancing the system's usability.
 + Encase the System📦
-Creating an enclosed case for the entire system would minimize the impact of external vibrations or environmental factors. A properly designed enclosure could also protect components from dust or accidental damage, improving overall durability and reliability.
+  Creating an enclosed case for the entire system would minimize the impact of external vibrations or environmental factors. A properly designed enclosure could also protect components from dust or accidental damage, improving overall durability and reliability.
 
 These enhancements would make the Intrusion Alarm System more robust and user-friendly, furthering its applicability in real-world scenarios.
